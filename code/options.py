@@ -125,7 +125,7 @@ class TestOptions(object):
 
         # Scan spec.
         opt.scan_spec = dict(affinity=(opt.scan_channels,) + opt.fov)
-        opt.scan_params = dict(stride=(0.5,0.5,0.5), blend='bump')
+        opt.scan_params = dict(stride=(0,0,0))
 
         # Directories.
         opt.exp_dir = 'experiments/{}'.format(opt.exp_name)
