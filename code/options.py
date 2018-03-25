@@ -97,7 +97,7 @@ class TestOptions(object):
         self.parser.add_argument('--chkpt_num', type=int, default=0)
         self.parser.add_argument('--no_eval', action='store_true')
         self.parser.add_argument('--CPU', action='store_true')
-        self.parser.add_argument('--num_threads', default=2) 
+        self.parser.add_argument('--num_threads', type=int, default=2) 
 
         # cuDNN auto-tuning.
         self.parser.add_argument('--autotune', action='store_true')
@@ -108,6 +108,7 @@ class TestOptions(object):
         self.parser.add_argument('--out_channels', type=int, default=3)
         self.parser.add_argument('--scan_channels', type=int, default=3)
         self.parser.add_argument('--no_BN', action='store_true')
+        self.parser.add_argument('--activation', default='elu') 
 
         # For benchmark.
         self.parser.add_argument('--dummy', action='store_true')

@@ -50,8 +50,12 @@ class InferenceNet(RSUNet):
     RSUNet for inference.
     """
     def __init__(self, opt):
-        super(InferenceNet, self).__init__(opt.in_spec, opt.out_spec, opt.depth,
-                                           use_bn=(not opt.no_BN))
+        if opt.activation == 'relu':
+		super(InferenceNet, self).__init__(opt.in_spec, opt.out_spec, opt.depth,
+                                           use_bn=(not opt.no_BN), activation=F.relu)
+        else:
+		super(InferenceNet, self).__init__(opt.in_spec, opt.out_spec, opt.depth,
+                                           use_bn=(not opt.no_BN), activation=F.elu)
         self.in_spec = opt.in_spec
         self.out_spec = opt.out_spec
         self.scan_spec = opt.scan_spec

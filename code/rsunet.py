@@ -251,12 +251,13 @@ class RSUNet(nn.Module):
     """
     def __init__(self, in_spec, out_spec, depth,
                  residual=True, upsample='bilinear', use_bn=True,
-                 momentum=0.001):
+                 momentum=0.001, activation=F.elu):
         super(RSUNet, self).__init__()
         self.residual = residual
         self.upsample = upsample
         self.use_bn   = use_bn
         self.momentum = momentum
+        self.activation = activation
 
         # Model assumes a single input.
         assert len(in_spec) == 1, "model takes a single input"
@@ -268,7 +269,7 @@ class RSUNet(nn.Module):
         self.depth = depth
 
         # Input feature embedding without batchnorm.
-        self.embed_in = EmbeddingMod(in_channels, embed_nin, embed_ks)
+        self.embed_in = EmbeddingMod(in_channels, embed_nin, embed_ks, activation=activation)
         in_channels = embed_nin
 
         # Contracting/downsampling pathway.
@@ -291,7 +292,7 @@ class RSUNet(nn.Module):
             self.add_dconv_mod(d, in_channels, fs, ks)
 
         # Output feature embedding without batchnorm.
-        self.embed_out = EmbeddingMod(in_channels, embed_nout, embed_ks)
+        self.embed_out = EmbeddingMod(in_channels, embed_nout, embed_ks, activation=activation)
         in_channels = embed_nout
 
         # Output by spec.
@@ -301,7 +302,7 @@ class RSUNet(nn.Module):
     def add_conv_mod(self, depth, in_channels, out_channels, kernel_size):
         name = 'convmod{}'.format(depth)
         module = ConvMod(in_channels, out_channels, kernel_size,
-                         residual=self.residual, use_bn=self.use_bn,
+                         residual=self.residual, use_bn=self.use_bn, activation=self.activation,
                          momentum=self.momentum)
         self.add_module(name, module)
 
@@ -309,7 +310,7 @@ class RSUNet(nn.Module):
         name = 'dconvmod{}'.format(depth)
         module = ConvMod(in_channels, out_channels, kernel_size,
                          residual=self.residual, use_bn=self.use_bn,
-                         momentum=self.momentum)
+                         momentum=self.momentum, activation=self.activation)
         self.add_module(name, module)
 
     def add_max_pool(self, depth, in_channels, down=(1,2,2)):
@@ -321,7 +322,7 @@ class RSUNet(nn.Module):
         name = 'upsample{}'.format(depth)
         module = UpsampleMod(in_channels, out_channels, up=up,
                              mode=self.upsample, use_bn=self.use_bn,
-                             momentum=self.momentum)
+                             momentum=self.momentum, activation=self.activation)
         self.add_module(name, module)
 
     def forward(self, x):
