@@ -21,7 +21,11 @@ def test(opt):
     net = InferenceNet(opt)
     if opt.chkpt_num > 0:
         net = load_chkpt(net, opt)
-    net = net.cuda()
+    if opt.CPU:
+        torch.set_num_threads(opt.num_threads)
+        net = net.cpu()
+    else:
+        net = net.cuda()
     if not opt.no_eval:
         net.eval()
 

@@ -96,6 +96,8 @@ class TestOptions(object):
         self.parser.add_argument('--gpu_ids', type=str, default=['0'], nargs='+')
         self.parser.add_argument('--chkpt_num', type=int, default=0)
         self.parser.add_argument('--no_eval', action='store_true')
+        self.parser.add_argument('--CPU', action='store_true')
+        self.parser.add_argument('--num_threads', default=2) 
 
         # cuDNN auto-tuning.
         self.parser.add_argument('--autotune', action='store_true')

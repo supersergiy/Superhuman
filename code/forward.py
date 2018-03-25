@@ -46,7 +46,10 @@ class Forward(object):
         for k in sorted(self.opt.in_spec):
             data = np.expand_dims(sample[k], axis=0)
             tensor = torch.from_numpy(data)
-            inputs.append(Variable(tensor, requires_grad=False, volatile=True).cuda())
+            if self.opt.CPU: 
+                inputs.append(Variable(tensor, requires_grad=False, volatile=True).cpu())
+	    else:
+                inputs.append(Variable(tensor, requires_grad=False, volatile=True).cuda())
         return inputs
 
     def _extract_data(self, outputs):
