@@ -21,7 +21,7 @@ from torch.nn import functional as F
 
 
 # Number of feature maps.
-nfeatures = [24,32,48,72,104,144]
+nfeatures = [32, 64, 128, 512, 256, 128]
 
 # Filter size.
 sizes = [(3,3,3)] * len(nfeatures)
@@ -110,7 +110,7 @@ class ConvMod(nn.Module):
     """
     Convolution module.
     """
-    def __init__(self, in_channels, out_channels, kernel_size,
+    def __init__(self, in_channels, mid_channels, out_channels, kernel_size,
                  activation=F.elu, residual=True, use_bn=True,
                  momentum=0.001):
         super(ConvMod, self).__init__()
@@ -120,13 +120,11 @@ class ConvMod(nn.Module):
         pad = pad_size(ks, 'same')
         bias = not use_bn
         # Convolutions.
-        self.conv1 = Conv(in_channels,  out_channels, ks, st, pad, bias)
-        self.conv2 = Conv(out_channels, out_channels, ks, st, pad, bias)
-        self.conv3 = Conv(out_channels, out_channels, ks, st, pad, bias)
+        self.conv1 = Conv(in_channels,  mid_channels, ks, st, pad, bias)
+        self.conv2 = Conv(mid_channels, out_channels, ks, st, pad, bias)
         # BatchNorm.
         self.bn1 = batchnorm(out_channels, use_bn, momentum=momentum)
         self.bn2 = batchnorm(out_channels, use_bn, momentum=momentum)
-        self.bn3 = batchnorm(out_channels, use_bn, momentum=momentum)
         # Activation function.
         self.activation = activation
         # Residual skip connection.
